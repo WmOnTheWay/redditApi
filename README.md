@@ -1,9 +1,9 @@
-## redux-saga example
+## Redux-saga example
 
-This is a redux-saga example based on the official reddit asynchronous example.
+This is a redux-saga example based on the [official reddit asynchronous example](https://www.redux.org.cn/docs/advanced/ExampleRedditAPI.html).
 
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+And this project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Scripts
 
