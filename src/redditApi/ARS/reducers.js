@@ -3,10 +3,11 @@ import {
   SELECT_SUBREDDIT,
   INVALIDATE_SUBREDDIT,
   REQUEST_POSTS,
-  RECEIVE_POSTS
+  RECEIVE_POSTS,
+  SET_VISIBILITY_FILTER
 } from './actions'
 
-function selectedSubreddit(state = 'reactjs', action) {
+function selectedSubreddit(state='reactjs', action) {
   switch (action.type) {
     case SELECT_SUBREDDIT:
       return action.subreddit
@@ -45,22 +46,20 @@ function posts(
   }
 }
 
-function postsBySubreddit(state = {}, action) {
-  switch (action.type) {
-    case INVALIDATE_SUBREDDIT:
-    case RECEIVE_POSTS:
-    case REQUEST_POSTS:
-      return Object.assign({}, state, {
-        [action.subreddit]: posts(state[action.subreddit], action)
-      })
-    default:
-      return state
+
+function viewSignlQuestion(state={},action){
+switch (action.type){
+  case SET_VISIBILITY_FILTER:
+    return {...state,filter:action.filter}
+  default:
+    return state
   }
 }
 
 const rootReducer = combineReducers({
-  postsBySubreddit,
-  selectedSubreddit
+  posts,
+  selectedSubreddit,
+  viewSignlQuestion
 })
 
 export default rootReducer

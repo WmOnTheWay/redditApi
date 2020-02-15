@@ -1,20 +1,21 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 
-const Link = ({ active, children, onClick }) => (
-  <button
-    onClick={onClick}
-    disabled={active}
-    style={{
-      marginLeft: '4px'
-    }}
-  >
-    {children}
-  </button>
+import { NavLink } from 'react-router-dom'
+const Link = ({ path, onClick, children }) => (
+  <NavLink
+    exact
+    to={ path }
+    activeStyle={{
+      fontWeight: 'bold',
+      color: 'black'
+     }}
+     onClick={onClick}
+  >{children}</NavLink>
 )
 
 Link.propTypes = {
-  active: PropTypes.bool.isRequired,
+  filter: PropTypes.string.isRequired,
   children: PropTypes.node.isRequired,
   onClick: PropTypes.func.isRequired
 }

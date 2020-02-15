@@ -3,11 +3,11 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import {
   selectSubreddit,
-  fetchPostsIfNeeded,
-  invalidateSubreddit
+  requestPosts,
 } from '../ARS/actions'
 import Picker from '../components/picker'
 import Posts from '../components/post'
+import { put } from 'redux-saga/effects'
 
 class AsyncApp extends Component {
   constructor(props) {
@@ -17,57 +17,61 @@ class AsyncApp extends Component {
   }
 
   componentDidMount() {
-    const { dispatch, selectedSubreddit } = this.props
-    dispatch(fetchPostsIfNeeded(selectedSubreddit))
+    const { selectedSubreddit } = this.props
+    this.props.dispatch(selectSubreddit(selectedSubreddit))
   }
 
-  componentWillReceiveProps(nextProps) {
+  componentDidUpdate(nextProps) {
     if (nextProps.selectedSubreddit !== this.props.selectedSubreddit) {
-      const { dispatch, selectedSubreddit } = nextProps
-      dispatch(fetchPostsIfNeeded(selectedSubreddit))
+      const { selectedSubreddit } = nextProps
+      this.props.dispatch(requestPosts(selectedSubreddit))
     }
   }
 
+
+
   handleChange(nextSubreddit) {
+    put(nextSubreddit)
     this.props.dispatch(selectSubreddit(nextSubreddit))
   }
 
   handleRefreshClick(e) {
     e.preventDefault()
-
-    const { dispatch, selectedSubreddit } = this.props
-    dispatch(invalidateSubreddit(selectedSubreddit))
-    dispatch(fetchPostsIfNeeded(selectedSubreddit))
+    const { selectedSubreddit } = this.props
+    this.props.dispatch(requestPosts(selectedSubreddit))
+    this.props.dispatch(selectSubreddit(selectedSubreddit))
   }
 
   render() {
-    const { selectedSubreddit, posts, isFetching, lastUpdated } = this.props
+    const { selectedSubreddit, posts } = this.props
     return (
       <div>
         <Picker
           value={selectedSubreddit}
           onChange={this.handleChange}
-          options={['reactjs', 'frontend']}
+          options={['reactjs', 'frontend', 'backend', 'vue', 'golang']}
         />
         <p>
-          {lastUpdated && (
+          {posts.lastUpdated && (
             <span>
-              Last updated at {new Date(lastUpdated).toLocaleTimeString()}.{' '}
+              Last updated at {new Date(posts.lastUpdated).toLocaleTimeString()}.{' '}
             </span>
           )}
-          {!isFetching && (
+          {!posts.isFetching && (
             <a href="/" onClick={this.handleRefreshClick}>
               Refresh
             </a>
           )}
         </p>
-        {isFetching && posts.length === 0 && <h2>Loading...</h2>}
-        {!isFetching && posts.length === 0 && <h2>Empty.</h2>}
-        {posts.length > 0 && (
-          <div style={{ opacity: isFetching ? 0.5 : 1 }}>
-            <Posts posts={posts} />
+        {!posts.isFetching && posts.items.length === 0 && <h2>Loading...</h2>}
+        {posts.isFetching && posts.items.length === 0 && <h2>Empty.</h2>}
+        {!posts.didInvalidate && posts.items.length > 0 && (
+          <div style={{ opacity: posts.isFetching ? 0.5 : 1 }}>
+            <Posts posts={posts.items} />
           </div>
         )}
+        {posts.didInvalidate && <h2>Network connection error.</h2>
+        }
       </div>
     )
   }
@@ -75,26 +79,15 @@ class AsyncApp extends Component {
 
 AsyncApp.propTypes = {
   selectedSubreddit: PropTypes.string.isRequired,
-  posts: PropTypes.array.isRequired,
-  isFetching: PropTypes.bool.isRequired,
-  lastUpdated: PropTypes.number,
-  dispatch: PropTypes.func.isRequired
+  posts: PropTypes.object.isRequired
 }
 
 function mapStateToProps(state) {
-  const { selectedSubreddit, postsBySubreddit } = state
-  const { isFetching, lastUpdated, items: posts } = postsBySubreddit[
-    selectedSubreddit
-  ] || {
-    isFetching: true,
-    items: []
-  }
+  const { selectedSubreddit, posts } = state
 
   return {
     selectedSubreddit,
     posts,
-    isFetching,
-    lastUpdated
   }
 }
 
