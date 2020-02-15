@@ -1,4 +1,4 @@
-## Redux-saga example
+## Redux-saga and React-Router example
 
 This is a redux-saga example based on the [official reddit asynchronous example](https://www.redux.org.cn/docs/advanced/ExampleRedditAPI.html).
 

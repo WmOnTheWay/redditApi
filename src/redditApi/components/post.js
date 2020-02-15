@@ -14,7 +14,7 @@ export default class Posts extends Component {
               <ul>
                 {this.props.posts.map((post, i) => (
                   <Fragment key={i}>
-                    -{post.title}<Link to={`/${post.id}`} >read more</Link>
+                    - {post.title}<Link to={`/${post.id}`} >read more</Link>
                     <br />
                   </Fragment>
                 ))}
