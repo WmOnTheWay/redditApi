@@ -7,7 +7,6 @@ import {
 } from '../ARS/actions'
 import Picker from '../components/picker'
 import Posts from '../components/post'
-import { put } from 'redux-saga/effects'
 
 class AsyncApp extends Component {
   constructor(props) {
@@ -31,7 +30,6 @@ class AsyncApp extends Component {
 
 
   handleChange(nextSubreddit) {
-    put(nextSubreddit)
     this.props.dispatch(selectSubreddit(nextSubreddit))
   }
 
